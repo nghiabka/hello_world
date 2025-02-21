@@ -1,8 +1,18 @@
 pipeline {
-    agent {docker {
-            image 'python:3.9'
-        }
-    }
+    // agent { 
+    //     dockerContainer {
+    //         image 'python:3.9'
+    //     }
+    // }
+
+    agent any
+
+    // agent { 
+    //     dockerContainer {
+    //         image 'python:3.9'
+    //         // args '--user root' // Optional: Run as root to avoid permission issues
+    //     }
+    // }
 
     stages {
         stage('Clone Repository') {
@@ -14,7 +24,7 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 sh 'python3 -m venv venv'
-                // sh 'source venv/bin/activate && pip install -r requirements.txt'
+                // sh 'source venv/bin/activate && pip install -r requirements.txt' 
             }
         }
 
