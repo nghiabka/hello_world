@@ -1,20 +1,17 @@
 pipeline {
-    // agent { 
-    //     dockerContainer {
-    //         image 'python:3.9'
-    //     }
-    // }
-
-    agent any
-
-    // agent { 
-    //     dockerContainer {
-    //         image 'python:3.9'
-    //         // args '--user root' // Optional: Run as root to avoid permission issues
-    //     }
-    // }
+    agent { 
+        dockerContainer {
+            image 'my-python-venv:latest'
+        }
+    }
 
     stages {
+        stage('Build Image') {
+            steps {
+                sh 'docker build -t my-python-venv .'
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 git branch: 'main', url: 'https://github.com/nghiabka/hello_world.git'
@@ -23,20 +20,28 @@ pipeline {
 
         stage('Setup Environment') {
             steps {
-                sh 'python3 -m venv venv'
-                // sh 'source venv/bin/activate && pip install -r requirements.txt' 
+                sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'source venv/bin/activate && python -m unittest test_hello.py'
+                sh '''
+                    source venv/bin/activate
+                    // python -m unittest discover -s . -p "test_*.py"
+                '''
             }
         }
 
         stage('Run Application') {
             steps {
-                sh 'source venv/bin/activate && python hello.py'
+                sh '''
+                    source venv/bin/activate
+                    python hello.py
+                '''
             }
         }
     }
