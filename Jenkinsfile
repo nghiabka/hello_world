@@ -2,12 +2,13 @@ node {
   def dockerImage
 
   stage('Checkout') {
-    echo 'Checking out code from local directory' // Or `checkout scm` if using Git
+    checkout scm // Fetches code from the configured Git repo
   }
 
   stage('Test') {
     try {
-      sh 'pip3 install -r requirements.txt && pytest'
+      sh 'python3 -m venv venv'
+      sh '. venv/bin/activate && pip install -r requirements.txt && pytest'
     } catch (e) {
       currentBuild.result = 'FAILURE'
       throw e
